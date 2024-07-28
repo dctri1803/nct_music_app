@@ -1,0 +1,40 @@
+version: "3.8"
+
+services:
+  db:
+    container_name: nct-mysql
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: nctdb
+      MYSQL_USER: xdpsx
+      MYSQL_PASSWORD: xdpsxpass
+    ports:
+      - "3307:3306"
+    volumes:
+      - db:/var/lib/mysql
+    networks:
+      - nct-net
+
+  nct-api:
+    container_name: nct-api
+    image: nct-demo
+    ports:
+      - "8088:8080"
+    environment:
+      MYSQL_HOST: nct-mysql
+      MYSQL_PORT: 3306
+      MYSQL_USER: xdpsx
+      MYSQL_PASSWORD: xdpsxpass
+    networks:
+      - nct-net
+    depends_on:
+      - db
+    restart: unless-stopped
+
+volumes:
+  db:
+
+networks:
+  nct-net:
